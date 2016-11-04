@@ -31,7 +31,7 @@ public class BacDriver {
 
         for(int i=0; i<=milliseconds; i=i+100) {
             // Get current voltage (unit is mV)
-            float voltage = (brickletAnalogIn.getVoltage() / 1000.0F) * 1.15F;
+            float voltage = (brickletAnalogIn.getVoltage() / 1000.0F);
             if (voltage >= maxVoltage) {
                 maxVoltage = voltage;
             }
@@ -50,7 +50,7 @@ public class BacDriver {
         System.out.println("Parts per Million " + partsPerMillion);
 
 
-        double bac = partsPerMillion / 2600.0f;
+        double bac = (partsPerMillion / 260.0f) * 1.1;
         System.out.println("BAC: " + bac );
 
         return bac;
@@ -62,7 +62,7 @@ public class BacDriver {
         Integer port = 4223;
 
         BacDriver bacDriver = new BacDriver(brickletId, host, port);
-        bacDriver.getBacLevel(2000);
+        bacDriver.getBacLevel(5000);
     }
 
 }
