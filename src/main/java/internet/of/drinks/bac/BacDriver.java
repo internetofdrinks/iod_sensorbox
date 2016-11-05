@@ -2,6 +2,7 @@ package internet.of.drinks.bac;
 
 import com.tinkerforge.BrickletAnalogIn;
 import com.tinkerforge.IPConnection;
+import internet.of.drinks.App;
 import internet.of.drinks.IpConnection;
 
 import static java.lang.Math.pow;
@@ -49,9 +50,7 @@ public class BacDriver {
     }
 
     public static void main(String[] args) throws Exception {
-        String brickletId = "vhe";
-        String host = "localhost";
-        Integer port = 4223;
+        String brickletId = App.ADC_UID;
 
         BacDriver bacDriver = new BacDriver(brickletId);
         bacDriver.getBacLevel(5000);
