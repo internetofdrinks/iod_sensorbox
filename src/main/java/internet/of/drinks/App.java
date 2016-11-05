@@ -93,6 +93,7 @@ public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPresse
             BacValue bv = new BacValue(this.currentUserId, bacLevel);
             BacClient bc = new BacClient();
             bc.post(bv);
+
         }
     }
 }
