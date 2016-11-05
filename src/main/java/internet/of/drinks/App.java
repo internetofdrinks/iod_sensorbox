@@ -12,10 +12,12 @@ import internet.of.drinks.rfid.RfidListener;
 import internet.of.drinks.user.User;
 import internet.of.drinks.user.UserClient;
 
+import java.io.IOException;
+
 /**
  * Created by Max Partenfelder on 05/11/2016.
  */
-public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPressedListener {
+public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener {
     public static final String RFID_UID = "uqD";
     public static final String ACC_UID = "zWT";
     public static final String DISP_UID = "AAX";
@@ -44,7 +46,11 @@ public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPresse
 
         userClient = new UserClient();
 
-        new Thread(this).start();
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -58,13 +64,6 @@ public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPresse
         }
         IdClient id = new IdClient();
         id.post(new IdValue(tagId));
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-
-        }
     }
 
     public static void main(String[] args) {
