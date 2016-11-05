@@ -1,13 +1,17 @@
 package internet.of.drinks;
 
+import com.tinkerforge.BrickletLCD20x4;
 import internet.of.drinks.bac.BacDriver;
+import internet.of.drinks.bac.rest.BacClient;
+import internet.of.drinks.bac.rest.BacValue;
+import internet.of.drinks.display.DisplayDriver;
 import internet.of.drinks.rfid.RfidDriver;
 import internet.of.drinks.rfid.RfidListener;
 
 /**
  * Created by Max Partenfelder on 05/11/2016.
  */
-public class App implements RfidListener, Runnable
+public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPressedListener
 {
     public static final String RFID_UID = "uqD";
     public static final String ACC_UID = "zWT";
@@ -17,13 +21,19 @@ public class App implements RfidListener, Runnable
     private String currentUserId = "";
     private BacDriver bacDriver;
     private RfidDriver rfidDriver;
+    private DisplayDriver displayDriver;
 
     public App()
     {
         this.bacDriver = new BacDriver(ADC_UID);
+
         this.rfidDriver = new RfidDriver(RFID_UID);
         this.rfidDriver.addListener(this);
-        this.run();
+
+        this.displayDriver = new DisplayDriver(DISP_UID);
+        this.displayDriver.addButtonPressedListener(this);
+
+        new Thread(this).start();
     }
 
     @Override
@@ -37,14 +47,7 @@ public class App implements RfidListener, Runnable
     {
         while(true)
         {
-            try
-            {
-                Thread.sleep(50);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+
         }
     }
 
@@ -55,5 +58,31 @@ public class App implements RfidListener, Runnable
 
         // Create a new instance of the App
         new App();
+    }
+
+    @Override
+    public void buttonPressed(short button)
+    {
+        System.out.println("Button pressed: " + button);
+//        bacLevel = bacDriver.getBacLevel(1000);
+        if(button == 3 && !currentUserId.equals(""))
+        {
+            System.out.println("Measuring BAC level");
+            double bacLevel = 0;
+            try
+            {
+                bacLevel = bacDriver.getBacLevel(3000);
+                displayDriver.displayBac(bacLevel);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            BacValue bv = new BacValue(this.currentUserId, bacLevel);
+            BacClient bc = new BacClient();
+            bc.post(bv);
+            System.out.println("Posting:\nUID: " + currentUserId + "\nBAC: " + bacLevel);
+        }
     }
 }
