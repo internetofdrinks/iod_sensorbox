@@ -11,6 +11,8 @@ import internet.of.drinks.rfid.RfidDriver;
 import internet.of.drinks.rfid.RfidListener;
 import internet.of.drinks.user.User;
 import internet.of.drinks.user.UserClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -18,19 +20,23 @@ import java.io.IOException;
  * Created by Max Partenfelder on 05/11/2016.
  */
 public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
     public static final String RFID_UID = "uqD";
     public static final String ACC_UID = "zWT";
     public static final String DISP_UID = "AAX";
     public static final String ADC_UID = "vhe";
-    private final UserClient userClient;
 
+    private final UserClient userClient;
+    private final BacClient bacClient;
     private String currentUserId = "";
     private BacDriver bacDriver;
     private RfidDriver rfidDriver;
     private DisplayDriver displayDriver;
 
     public App() {
+        LOGGER.debug("Starting initialization");
         this.bacDriver = new BacDriver(ADC_UID);
+        bacClient = new BacClient();
 
         this.rfidDriver = new RfidDriver(RFID_UID);
         this.rfidDriver.addListener(this);
@@ -46,6 +52,7 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
 
         userClient = new UserClient();
 
+        LOGGER.debug("Completed initialization");
         try {
             System.in.read();
         } catch (IOException e) {
@@ -55,15 +62,17 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
 
     @Override
     public void rfidEvent(String tagId) {
+        LOGGER.debug("RFID event started for " + tagId);
         this.currentUserId = tagId;
         User user = userClient.getUser(tagId);
-        if(user != null) {
+        if (user != null) {
             displayDriver.displayMessage((short) 3, "User: " + user.getFirstname());
         } else {
             displayDriver.displayMessage((short) 3, "User: " + tagId);
         }
         IdClient id = new IdClient();
         id.post(new IdValue(tagId));
+        LOGGER.debug("RFID event completed for " + tagId);
     }
 
     public static void main(String[] args) {
@@ -76,10 +85,8 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
 
     @Override
     public void buttonPressed(short button) {
-        System.out.println("Button pressed: " + button);
-//        bacLevel = bacDriver.getBacLevel(1000);
+        LOGGER.debug("Button event started for " + button);
         if (button == 3 && !currentUserId.equals("")) {
-            System.out.println("Measuring BAC level");
             double bacLevel = 0;
             try {
                 displayDriver.displayMessage((short) 0, "Measuring...");
@@ -90,9 +97,8 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
             }
 
             BacValue bv = new BacValue(this.currentUserId, bacLevel);
-            BacClient bc = new BacClient();
-            bc.post(bv);
-
+            bacClient.post(bv);
         }
+        LOGGER.debug("Button event finished for " + button);
     }
 }
