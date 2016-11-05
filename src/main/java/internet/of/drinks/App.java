@@ -11,7 +11,7 @@ public class App implements RfidListener, Runnable
 {
     public static final String RFID_UID = "uqD";
     public static final String ACC_UID = "zWT";
-    public static final String DIPS_UID = "AAX";
+    public static final String DISP_UID = "AAX";
     public static final String ADC_UID = "vhe";
 
     private String currentUserId = "";
