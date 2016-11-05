@@ -29,10 +29,18 @@ public class DisplayDriver {
         }
     }
 
-    public void displayBac(Double bac) {
+    public void clearLine(Short line) {
         try {
-            display.clearDisplay();
-            display.writeLine((byte) 0, (byte) 0, "BAC: " + String.format("%1.2f", bac));
+            display.writeLine(line, (byte) 0, "                    ");
+        } catch (TimeoutException | NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayMessage(Short line, String message) {
+        try {
+            clearLine(line);
+            display.writeLine(line, (byte) 0, message);
         } catch (TimeoutException | NotConnectedException e) {
             e.printStackTrace();
         }
@@ -55,18 +63,9 @@ public class DisplayDriver {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         DisplayDriver displayDriver = new DisplayDriver(App.DISP_UID);
-        BacDriver bacDriver = new BacDriver(App.ADC_UID);
-        displayDriver.addButtonPressedListener(button -> {
-            double bacLevel = 0;
-            try {
-                bacLevel = bacDriver.getBacLevel(1000);
-                displayDriver.displayBac(bacLevel);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        while(true) {
-            Thread.currentThread().sleep(10000);
-        }
+        displayDriver.displayMessage((short) 0, "Tt");
+        displayDriver.displayMessage((short) 1, "Tt2");
+        displayDriver.displayMessage((short) 2, "Te3");
+        displayDriver.displayMessage((short) 3, "st4");
     }
 }
