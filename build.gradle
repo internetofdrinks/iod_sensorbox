@@ -5,7 +5,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "internet.of.things.GroovyTest"
+mainClassName = "internet.of.drinks.App"
 
 sourceCompatibility = 1.8
 
