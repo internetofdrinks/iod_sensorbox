@@ -19,7 +19,8 @@ public class BacDriver {
         brickletAnalogIn = new BrickletAnalogIn(brickletId, ipConnection);
     }
 
-    public double getBacLevel(Integer milliseconds) throws Exception {
+    public double getBacLevel(Integer milliseconds) throws Exception
+    {
         float maxVoltage = 0.0F;
 
         for(int i=0; i<=milliseconds; i=i+100) {

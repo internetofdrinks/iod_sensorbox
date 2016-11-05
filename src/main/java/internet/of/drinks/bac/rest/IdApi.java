@@ -4,11 +4,11 @@ import feign.Headers;
 import feign.RequestLine;
 
 /**
- * Created by Martin on 05.11.2016.
+ * Created by Max Partenfelder on 05/11/2016.
  */
-public interface BacApi {
-
+public interface IdApi
+{
     @Headers("Content-Type: application/json;charset=UTF-8")
-    @RequestLine("POST /bac")
-    void post(BacValue value);
+    @RequestLine("POST /ids")
+    void post(IdValue id);
 }

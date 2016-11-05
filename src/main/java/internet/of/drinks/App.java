@@ -4,6 +4,8 @@ import com.tinkerforge.BrickletLCD20x4;
 import internet.of.drinks.bac.BacDriver;
 import internet.of.drinks.bac.rest.BacClient;
 import internet.of.drinks.bac.rest.BacValue;
+import internet.of.drinks.bac.rest.IdClient;
+import internet.of.drinks.bac.rest.IdValue;
 import internet.of.drinks.display.DisplayDriver;
 import internet.of.drinks.rfid.RfidDriver;
 import internet.of.drinks.rfid.RfidListener;
@@ -40,6 +42,8 @@ public class App implements RfidListener, Runnable, BrickletLCD20x4.ButtonPresse
     public void rfidEvent(String tagId)
     {
         this.currentUserId = tagId;
+        IdClient id = new IdClient();
+        id.post(new IdValue(tagId));
     }
 
     @Override
