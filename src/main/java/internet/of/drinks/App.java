@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Max Partenfelder on 05/11/2016.
@@ -32,6 +33,7 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
     private BacDriver bacDriver;
     private RfidDriver rfidDriver;
     private DisplayDriver displayDriver;
+    private HashMap<String, User> userCache;
 
     public App() {
         LOGGER.debug("Starting initialization");
@@ -51,6 +53,7 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
         displayDriver.displayMessage((short) 3, "Authenticate first!");
 
         userClient = new UserClient();
+        userCache = new HashMap<>();
 
         LOGGER.debug("Completed initialization");
         try {
@@ -64,7 +67,7 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
     public void rfidEvent(String tagId) {
         LOGGER.debug("RFID event started for " + tagId);
         this.currentUserId = tagId;
-        User user = userClient.getUser(tagId);
+        User user = getUser(tagId);
         if (user != null) {
             displayDriver.displayMessage((short) 3, "User: " + user.getFirstname());
         } else {
@@ -73,6 +76,15 @@ public class App implements RfidListener, BrickletLCD20x4.ButtonPressedListener 
         IdClient id = new IdClient();
         id.post(new IdValue(tagId));
         LOGGER.debug("RFID event completed for " + tagId);
+    }
+
+    private User getUser(String tagId) {
+        User user = userCache.get(tagId);
+        if(user == null) {
+            user = userClient.getUser(tagId);
+            userCache.put(tagId, user);
+        }
+        return user;
     }
 
     public static void main(String[] args) {
