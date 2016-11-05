@@ -5,5 +5,5 @@ package internet.of.drinks.rfid;
  */
 public interface RfidListener
 {
-    public void RfidEvent(String tagId);
+    public void rfidEvent(String tagId);
 }

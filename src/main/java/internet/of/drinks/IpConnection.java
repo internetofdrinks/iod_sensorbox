@@ -22,6 +22,8 @@ public enum IpConnection
     IpConnection(String host, int port)
     {
         this.ipConnection = new IPConnection();
+        this.host = host;
+        this.port = port;
     }
 
     public IPConnection getConnection()
@@ -35,6 +37,7 @@ public enum IpConnection
 
     public void connect()
     {
+        System.out.println("Connecting to brickd");
         try
         {
             ipConnection.connect(this.host, this.port);
@@ -47,6 +50,7 @@ public enum IpConnection
         {
             e.printStackTrace();
         }
+        System.out.println("Connected");
     }
 
     public void disconnect()

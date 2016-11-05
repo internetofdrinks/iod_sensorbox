@@ -1,11 +1,8 @@
 package internet.of.drinks.bac;
 
-import com.tinkerforge.AlreadyConnectedException;
 import com.tinkerforge.BrickletAnalogIn;
 import com.tinkerforge.IPConnection;
-import org.codehaus.groovy.control.messages.ExceptionMessage;
-
-import java.io.IOException;
+import internet.of.drinks.IpConnection;
 
 import static java.lang.Math.pow;
 
@@ -16,14 +13,9 @@ public class BacDriver {
     private final IPConnection ipConnection;
     private final BrickletAnalogIn brickletAnalogIn;
 
-    public BacDriver(String brickletId, String host, Integer port) {
-        ipConnection = new IPConnection();
+    public BacDriver(String brickletId) {
+        ipConnection = IpConnection.INSTANCE.getConnection();
         brickletAnalogIn = new BrickletAnalogIn(brickletId, ipConnection);
-        try {
-            ipConnection.connect(host, port);
-        } catch (IOException | AlreadyConnectedException e) {
-           throw new RuntimeException(e);
-        }
     }
 
     public double getBacLevel(Integer milliseconds) throws Exception {
@@ -61,7 +53,7 @@ public class BacDriver {
         String host = "localhost";
         Integer port = 4223;
 
-        BacDriver bacDriver = new BacDriver(brickletId, host, port);
+        BacDriver bacDriver = new BacDriver(brickletId);
         bacDriver.getBacLevel(5000);
     }
 
