@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public enum IpConnection
 {
-    INSTANCE("localhost", 4223);
+    INSTANCE("192.168.43.83", 4223);
 
     private String host;
     private int port;

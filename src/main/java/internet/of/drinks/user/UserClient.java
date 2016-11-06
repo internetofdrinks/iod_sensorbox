@@ -2,15 +2,17 @@ package internet.of.drinks.user;
 
 import feign.Feign;
 import feign.Logger;
+import feign.Retryer;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import feign.slf4j.Slf4jLogger;
-import internet.of.drinks.bac.rest.BacApi;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Created by Martin on 05.11.2016.
  */
-public class UserClient implements UserApi{
+public class UserClient implements UserApi {
 
     private final UserApi api;
 
@@ -20,8 +22,10 @@ public class UserClient implements UserApi{
                 .encoder(new GsonEncoder())
                 .logger(new Slf4jLogger())
                 .logLevel(Logger.Level.FULL)
+                .retryer(new Retryer.Default(1000, SECONDS.toMillis(3), 2))
                 .target(UserApi.class, "https://iodservice.herokuapp.com");
     }
+
     @Override
     public User getUser(String id) {
         try {
